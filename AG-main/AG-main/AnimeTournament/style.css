@@ -1,0 +1,345 @@
+body {
+  background-color: #121212;
+  color: #eee;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  margin: 0;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+header {
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1rem;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  text-align: center;
+  flex-grow: 1;
+  margin: 0 1rem;
+}
+
+.menu-btn,
+.toggle-btn {
+  background-color: #00bcd4;
+  color: #121212;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.menu-btn:hover,
+.toggle-btn:hover {
+  background-color: #0097a7;
+  color: white;
+}
+
+/* Mode clair */
+body.light {
+  background-color: #f5f5f5;
+  color: #222;
+}
+body.light .menu-btn,
+body.light .toggle-btn {
+  background-color: #1565c0;
+  color: white;
+}
+body.light .menu-btn:hover,
+body.light .toggle-btn:hover {
+  background-color: #0d47a1;
+}
+
+#mode-select {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+#mode-select button {
+  background-color: #00bcd4;
+  color: #121212;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+#mode-select button:hover {
+  background-color: #0097a7;
+  color: white;
+}
+#mode-select button.active {
+  background-color: #0097a7;
+  color: white;
+}
+
+#duel-container {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 950px;
+}
+
+#duel-container .anime,
+#duel-container .opening {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 330px;
+}
+
+#duel-container .anime img,
+#duel-container .opening iframe {
+  width: 100%;
+  height: 440px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 0 18px #1116;
+}
+
+#duel-container .anime h3,
+#duel-container .opening h3 {
+  text-align: center;
+  font-weight: bold;
+  margin: 1rem 0 0 0;
+}
+
+/* === BOUTON SUIVANT (Sous le duel) === */
+#next-match-btn {
+  display: none;
+  margin: 0 auto 2.2rem auto;
+  padding: 1rem 2.5rem;
+  font-size: 1.17rem;
+  border-radius: 10px;
+  background: #00bcd4;
+  color: #121212;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 16px #00bcd444;
+  transition: background 0.2s, color 0.2s, box-shadow 0.18s;
+}
+#next-match-btn:hover {
+  background: #0097a7;
+  color: #fff;
+  box-shadow: 0 6px 22px #00bcd480;
+}
+body.light #next-match-btn {
+  background: #1565c0;
+  color: #fff;
+}
+body.light #next-match-btn:hover {
+  background: #0d47a1;
+  color: #fff;
+}
+
+/* Classement style - podium */
+#classement {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 2.2rem 2rem;
+  justify-items: center;
+  align-items: start;
+  margin: 2rem 0 3rem 0;
+  width: 100%;
+  max-width: 1150px;
+  overflow-x: visible;
+  padding-top: 60px;
+  position: relative;
+}
+
+/* Classement card */
+.classement-item {
+  position: relative;
+  background: none;
+  padding: 0.2rem 0 0.5rem 0;
+  border-radius: 12px;
+  transition: box-shadow 0.17s, transform 0.14s;
+  box-shadow: 0 0 0px #00bcd400;
+}
+.classement-item img,
+.classement-item iframe {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 0.8em;
+  box-shadow: 0 0 18px #1116;
+}
+.classement-item:hover {
+  transform: translateY(-5px) scale(1.04);
+  box-shadow: 0 6px 28px #00bcd4cc;
+}
+/* Badge de rang général */
+.classement-item .rank {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  background: #00bcd4;
+  color: #111;
+  border-radius: 9px;
+  font-weight: bold;
+  font-size: 1.12rem;
+  padding: 0.14em 1.2em;
+  box-shadow: 0 1px 6px #1113;
+  z-index: 4;
+  border: 2px solid #fff7;
+  min-width: 44px;
+  text-align: center;
+  transition: background 0.18s, color 0.18s;
+}
+/* Podium : Or, Argent, Bronze */
+.classement-item.top1 {
+  border-color: gold;
+  box-shadow: 0 4px 24px #ffd70099, 0 0 0 4px #fff2;
+  z-index: 2;
+  margin-top: 0;
+}
+.classement-item.top1::before {
+  content: "👑";
+  font-size: 2.3rem;
+  position: absolute;
+  top: -38px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  filter: drop-shadow(0 2px 8px #ffd700cc);
+  pointer-events: none;
+}
+.classement-item.top1 .rank {
+  background: #ffd700;
+  color: #111;
+  box-shadow: 0 1px 6px #ffd700b8, 0 0 14px #ffe970b5;
+  border: 2px solid #fff7;
+}
+.classement-item.top2 {
+  border-color: #bbb;
+  box-shadow: 0 2px 14px #bbb8;
+  margin-top: 10px;
+}
+.classement-item.top2 .rank {
+  background: linear-gradient(90deg, #eee, #bbb);
+  color: #333;
+}
+.classement-item.top3 {
+  border-color: #c96f29;
+  box-shadow: 0 2px 14px #c96f2977;
+  margin-top: 10px;
+}
+.classement-item.top3 .rank {
+  background: linear-gradient(90deg, #ffb47c, #c96f29);
+  color: #45250f;
+}
+.classement-item .title {
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+  margin-top: 0.1em;
+  font-size: 1.08rem;
+  min-height: 2.1em;
+}
+
+@media (max-width: 900px) {
+  #classement {
+    max-width: 99vw;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.2rem 0.8rem;
+    padding-top: 34px;
+  }
+  .classement-item img,
+  .classement-item iframe {
+    height: 135px;
+  }
+  .classement-item .rank {
+    font-size: 0.95rem;
+    min-width: 32px;
+    padding: 0.12em 0.65em;
+    left: 6px;
+    top: 6px;
+  }
+  .classement-item.top1::before {
+    font-size: 1.38rem;
+    top: -19px;
+  }
+}
+
+/* Duel: met le titre bien cliquable, effet bouton et pulse */
+#duel-container .anime h3,
+#duel-container .opening h3 {
+  cursor: pointer;
+  background: #00bcd4;
+  color: #121212;
+  border-radius: 12px;
+  margin: 1.2rem 0 0 0;
+  padding: 0.8em 1.7em;
+  font-size: 1.4rem;
+  font-weight: bold;
+  letter-spacing: 0.01em;
+  transition: background 0.14s, color 0.14s, box-shadow 0.17s, transform 0.12s;
+  box-shadow: 0 0 0px #00bcd400;
+  border: none;
+  outline: none;
+  animation: duel-pulse-clic 1.18s infinite alternate cubic-bezier(.65,.12,.45,1);
+  position: relative;
+  z-index: 1;
+  user-select: none;
+}
+
+@keyframes duel-pulse-clic {
+  0%   { box-shadow: 0 0 0px #00bcd400;   transform: scale(1); }
+  100% { box-shadow: 0 0 24px #00bcd470;  transform: scale(1.025);}
+}
+
+#duel-container .anime h3:hover,
+#duel-container .opening h3:hover,
+#duel-container .anime h3:focus,
+#duel-container .opening h3:focus {
+  background: #0097a7;
+  color: #fff;
+  box-shadow: 0 6px 24px #00bcd470, 0 0 0 6px #fff4;
+  text-decoration: underline;
+  outline: none;
+  transform: scale(1.04);
+}
+
+#duel-container .anime h3:active,
+#duel-container .opening h3:active {
+  background: #007888;
+  color: #fff;
+  box-shadow: 0 2px 10px #00bcd499;
+  transform: scale(0.98);
+}
+
+footer {
+  padding: 1.2rem 0 0.4rem 0;
+  color: #555;
+  font-size: 0.95rem;
+  text-align: center;
+  user-select: none;
+  width: 100%;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+  transition: color 0.3s;
+}
+body.light footer {
+  color: #888;
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guess The Opening</title>
+  <link rel="icon" type="image/png" href="../images/favicon-32x32.png">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header id="main-header">
+    <button id="back-to-menu" class="menu-btn">⬅️ Menu</button>
+    <h1>Guess The Opening</h1>
+    <button id="themeToggle" class="toggle-btn">🌓</button>
+  </header>
+
+  <!-- Bandeau Daily -->
+  <div id="daily-banner" style="display:none;">
+    <span id="daily-status"></span>
+    <span id="daily-score"></span>
+    <button id="switch-mode-btn" class="toggle-btn"></button>
+  </div>
+
+  <div id="container">
+    <div id="successContainer" style="display:none;"></div>
+    <div class="input-container">
+      <input type="text" id="openingInput" placeholder="Entrez le nom d'un anime..." autocomplete="off" />
+      <div id="suggestions" class="suggestions"></div>
+    </div>
+    <div id="listen-buttons" style="display:flex; justify-content:center; gap:12px; margin-bottom:16px;">
+      <button id="playTry1">Écoute 1 (3s)</button>
+      <button id="playTry2" disabled>Écoute 2 (5s)</button>
+      <button id="playTry3" disabled>Écoute 3 (15s)</button>
+    </div>
+    <div id="failedAttempts"></div>
+    <div id="result"></div>
+    <div id="timer"></div>
+    <button id="nextBtn" style="display:none; margin-top:1.1rem;"></button>
+    <canvas id="fireworks"></canvas>
+    <div id="playerWrapper" style="display:none;"></div>
+  </div>
+
+  <footer>
+    © 2025 mastermanga
+  </footer>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="script.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Anime Tournament</title>
+  <link rel="icon" type="image/png" href="../images/favicon-32x32.png">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <button id="back-to-menu" class="menu-btn">⬅️ Menu</button>
+    <h1>Anime Tournament</h1>
+    <button id="themeToggle" class="toggle-btn">🌓</button>
+  </header>
+
+  <div id="mode-select">
+    <button id="mode-anime" class="active" aria-pressed="true">Animes</button>
+    <button id="mode-opening" aria-pressed="false">Openings</button>
+  </div>
+
+  <div id="duel-container"></div>
+  
+  <!-- Bouton Suivant : caché par défaut -->
+  <button id="next-match-btn" style="display:none;">Rejouer</button>
+  
+  <div id="classement"></div>
+
+  <footer>
+    © 2025 mastermanga
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

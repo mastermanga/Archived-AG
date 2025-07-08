@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Anidle</title>
+  <link rel="icon" type="image/png" href="../images/favicon-32x32.png">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <button id="back-to-menu" class="menu-btn">⬅️ Menu</button>
+    <h1>Guess the Anime</h1>
+    <button id="themeToggle" class="toggle-btn">🌓</button>
+  </header>
+
+  <!-- Bandeau Daily juste après le header -->
+  <div id="daily-banner" style="display:none; margin-bottom:1.2rem; text-align:center;">
+    <span id="daily-status"></span>
+    <span id="daily-score"></span>
+    <button id="switch-mode-btn" class="toggle-btn" style="margin-left: 1.4rem; font-size: 1rem; padding: 0.35rem 1rem;"></button>
+  </div>
+
+  <div id="container">
+    <div style="display:flex; gap:20px; justify-content:center;">
+      <div id="aideContainer" style="width:300px;"></div>
+      <div style="flex:1;">
+        <div id="successContainer" style="display:none;"></div>
+        <div class="input-container">
+          <input type="text" id="animeInput" placeholder="Entrez le nom d'un anime..." autocomplete="off" />
+          <div id="suggestions" class="suggestions"></div>
+          <div id="counter">Tentatives : 0</div>
+          <button id="indiceBtn">Afficher indice suivant</button>
+        </div>
+        <div id="indicesContainer" style="display:none;">
+          <p><strong>Indice 1 - Genre principal :</strong> <span id="indice1"></span></p>
+          <p><strong>Indice 2 - Studio :</strong> <span id="indice2"></span></p>
+          <p><strong>Indice 3 - Date de sortie :</strong> <span id="indice3"></span></p>
+          <p><strong>Indice 4 - Première lettre :</strong> <span id="indice4"></span></p>
+          <p><strong>Indice 5 - Image :</strong><br /><img id="indice5" src="" alt="Indice Image" style="width:200px; filter: blur(8px);" /></p>
+        </div>
+        <div id="results"></div>
+      </div>
+    </div>
+    <canvas id="fireworks"></canvas>
+  </div>
+
+  <footer>
+    © 2025 mastermanga
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

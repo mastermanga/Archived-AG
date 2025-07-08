@@ -1,0 +1,243 @@
+body {
+  background-color: #121212;
+  color: #eee;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  transition: background-color 0.3s, color 0.3s;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+header {
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1rem;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  text-align: center;
+  flex-grow: 1;
+  margin-right: 1rem;
+}
+
+.toggle-btn {
+  background-color: #00bcd4;
+  color: #121212;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  flex-shrink: 0;
+}
+
+.toggle-btn:hover {
+  background-color: #0097a7;
+  color: #fff;
+}
+
+#container {
+  background-color: #121212;
+  border-radius: 10px;
+  padding: 1.5rem 2rem 1.6rem 2rem;
+  width: 350px;
+  box-shadow: 0 0 15px 3px #00bcd4;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+/* --- DAILY RECAP --- */
+#daily-recap {
+  background: #202933;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px #00bcd42a;
+  padding: 1.2rem 1rem 1.1rem 1rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+  max-width: 340px;
+  text-align: left;
+  transition: background 0.25s;
+}
+#daily-recap h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.18rem;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+  color: #00bcd4;
+  text-align: left;
+}
+#daily-recap ul {
+  list-style: none;
+  margin: 0 0 0.7rem 0;
+  padding: 0;
+}
+#daily-recap li {
+  margin: 0.2rem 0;
+  font-size: 1rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.8em;
+  padding: 2px 0 2px 0;
+}
+#recap-total {
+  border-top: 1px solid #00bcd4cc;
+  margin-top: 7px;
+  padding-top: 5px;
+  font-size: 1.12rem;
+  font-weight: bold;
+  display: inline-block;
+  color: #fff;
+}
+
+/* Lien Mode Classic */
+.classic-link {
+  color: #8ac6d1;
+  font-size: 0.97em;
+  margin-left: 8px;
+  text-decoration: underline dotted;
+  transition: color 0.2s;
+  font-weight: 500;
+}
+.classic-link:hover {
+  color: #00bcd4;
+  text-decoration: underline;
+}
+body.light .classic-link {
+  color: #1976d2;
+}
+body.light .classic-link:hover {
+  color: #1565c0;
+}
+
+/* --- MENU JEUX --- */
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  width: 100%;
+}
+
+.menu a {
+  background-color: #00bcd4;
+  color: #121212;
+  padding: 0.7rem 1.2rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  flex: 1 1 45%;
+  text-align: center;
+  min-width: 120px;
+  transition: background-color 0.3s, color 0.3s;
+  font-size: 1.1rem;
+  box-shadow: 0 1px 5px #00bcd444;
+}
+
+.menu a:hover {
+  background-color: #0097a7;
+  color: #fff;
+}
+
+footer {
+  padding: 1.2rem 0 0.4rem 0;
+  color: #555;
+  font-size: 0.95rem;
+  text-align: center;
+  user-select: none;
+  width: 100%;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+  transition: color 0.3s;
+}
+body.light footer {
+  color: #888;
+}
+
+body.light {
+  background-color: #f5f5f5;
+  color: #222;
+}
+
+body.light #container {
+  background-color: #fff;
+  box-shadow: 0 0 15px #42a5f5;
+}
+
+body.light #daily-recap {
+  background: #f4fafd;
+  box-shadow: 0 2px 14px #42a5f54b;
+}
+body.light #daily-recap h2 {
+  color: #1565c0;
+}
+body.light #recap-total {
+  color: #1976d2;
+}
+
+body.light .menu a {
+  background-color: #42a5f5;
+  color: #f5f5f5;
+}
+body.light .menu a:hover {
+  background-color: #1e88e5;
+  color: #fff;
+}
+body.light .toggle-btn {
+  background-color: #1565c0;
+  color: #fff;
+}
+body.light .toggle-btn:hover {
+  background-color: #0d47a1;
+  color: #fff;
+}
+
+/* --- Responsive mobile --- */
+@media (max-width: 500px) {
+  #container {
+    width: 98vw;
+    padding: 1.1rem 0.5rem 1.4rem 0.5rem;
+    box-shadow: 0 0 10px 2px #00bcd4;
+  }
+  .menu {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  #daily-recap {
+    max-width: 98vw;
+    padding: 1rem 5vw 1rem 5vw;
+  }
+}
+
+/* Animation douce à l'apparition */
+#daily-recap, .menu a {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.6s cubic-bezier(.47,1.64,.41,.8) 0.1s forwards;
+}
+.menu a { animation-delay: 0.14s; }
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

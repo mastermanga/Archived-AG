@@ -1,0 +1,330 @@
+/* ========== DAILY BANNER ========== */
+#daily-banner {
+  display: none;
+  background: linear-gradient(90deg, #1565c0 40%, #00bcd4 100%);
+  color: #fff;
+  border-radius: 9px;
+  box-shadow: 0 4px 15px #00bcd4cc;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 12px 20px 10px 20px;
+  margin: 0 auto 22px auto;
+  max-width: 440px;
+  width: 95%;
+  letter-spacing: 0.4px;
+  gap: 10px;
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+#daily-banner .score {
+  margin-top: 5px;
+  font-size: 1rem;
+  color: #ffe082;
+  font-weight: bold;
+}
+#switch-mode-btn {
+  background-color: #42a5f5;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  margin-left: 16px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 1px 8px #1565c088;
+  transition: background 0.2s, color 0.2s;
+  outline: none;
+}
+#switch-mode-btn:hover {
+  background: #1976d2;
+  color: #fff;
+}
+@media (max-width: 600px) {
+  #daily-banner {
+    max-width: 98vw;
+    font-size: 1rem;
+    padding: 10px 3vw 10px 3vw;
+    flex-direction: column;
+    gap: 6px;
+  }
+  #switch-mode-btn {
+    margin-left: 0;
+    margin-top: 8px;
+    width: 100%;
+  }
+}
+body.light #daily-banner {
+  color: #fff;
+  background: linear-gradient(90deg, #42a5f5 60%, #00bcd4 100%);
+  box-shadow: 0 4px 15px #42a5f566;
+}
+body.light #switch-mode-btn {
+  background-color: #1565c0;
+}
+body.light #switch-mode-btn:hover {
+  background: #0d47a1;
+}
+
+body {
+  background-color: #121212;
+  color: #eee;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0; padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0;
+  margin-top: 2rem;
+  background: none;
+  border: none;
+}
+
+.header-group {
+  display: flex;
+  align-items: center;
+  gap: 1.3rem;
+}
+
+header h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.menu-btn, .toggle-btn {
+  background-color: #00bcd4;
+  color: #121212;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s, color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.menu-btn:hover, .toggle-btn:hover {
+  background-color: #0097a7;
+  color: #fff;
+}
+
+/* CONTENEUR PRINCIPAL */
+#character-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.character-img {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 10px;
+  border: 2px solid #444;
+  display: none;
+  background-color: #222;
+  margin: 0 6px 8px 6px;
+}
+
+/* INPUT + BOUTON EN LIGNE */
+#controls {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 10px;
+  position: relative;
+  width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.input-container input[type="text"] {
+  flex: 1;
+  margin-top: 0;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #555;
+  background-color: #222;
+  color: #e0e0e0;
+  outline: none;
+}
+.input-container input[type="text"]:focus {
+  border-color: #00bcd4;
+}
+
+/* Suggestions personnalisées */
+.suggestions {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  max-width: 320px;
+  width: 100%;
+  margin: 0 auto 10px;
+  text-align: left;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 6px 18px #111a;
+  position: absolute;
+  z-index: 3;
+  left: 0; right: 0;
+  top: 44px;
+}
+.suggestions div {
+  padding: 9px 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.suggestions div:hover {
+  background-color: #00bcd4;
+  color: #121212;
+}
+body.light .suggestions {
+  background: #f8faff;
+  border: 1px solid #b6cdfc;
+}
+body.light .suggestions div:hover {
+  background-color: #1565c0;
+  color: #fff;
+}
+
+button {
+  padding: 12px 19px;
+  font-size: 1.05rem;
+  border-radius: 7px;
+  border: none;
+  background-color: #00bcd4;
+  color: #121212;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  box-shadow: 0 1px 5px #1113;
+}
+button:disabled {
+  background-color: #555;
+  color: #ccc;
+  cursor: not-allowed;
+}
+button:hover:enabled {
+  background-color: #0097a7;
+  color: #fff;
+}
+
+#feedback {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  min-height: 24px;
+}
+.success {
+  color: #4caf50;
+}
+.error {
+  color: #e03e3e;
+}
+
+#timer {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #00bcd4;
+}
+
+footer {
+  margin-top: auto;
+  padding: 1.2rem 0 0.4rem 0;
+  color: #555;
+  font-size: 0.95rem;
+  text-align: center;
+  user-select: none;
+  width: 100%;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+  transition: color 0.3s;
+}
+
+/* MODE CLAIR */
+body.light {
+  background-color: #f5f5f5;
+  color: #222;
+}
+body.light header h1 { color: #234; }
+body.light .menu-btn,
+body.light .toggle-btn {
+  background-color: #1565c0;
+  color: #fff;
+}
+body.light .menu-btn:hover,
+body.light .toggle-btn:hover {
+  background-color: #0d47a1;
+  color: #fff;
+}
+
+body.light input[type="text"] {
+  background-color: #fff;
+  color: #222;
+  border: 1px solid #b6cdfc;
+}
+body.light input[type="text"]:focus {
+  border-color: #1565c0;
+}
+
+body.light .character-img {
+  background: #f6f6f7;
+  border-color: #b6cdfc;
+}
+
+body.light button {
+  background: #42a5f5;
+  color: #fff;
+}
+body.light button:disabled {
+  background: #b0b6c6;
+  color: #888;
+}
+body.light button:hover:enabled {
+  background: #1565c0;
+  color: #fff;
+}
+
+body.light #feedback.success {
+  color: #388e3c;
+}
+body.light #feedback.error {
+  color: #b71c1c;
+}
+body.light #timer {
+  color: #1565c0;
+}
+body.light footer {
+  color: #888;
+}
+
+body, input, button, .character-img {
+  transition: background 0.3s, color 0.2s, border 0.2s;
+}

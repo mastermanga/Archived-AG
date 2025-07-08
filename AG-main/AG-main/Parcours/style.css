@@ -1,0 +1,356 @@
+html, body {
+  background: #181818 !important;
+  color: #eee;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  transition: background 0.4s;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100vw;
+}
+
+body.light, html.light {
+  background: #f5f5f5 !important;
+  color: #234;
+}
+
+/* HEADER */
+header {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  background: none;
+  border: none;
+}
+.header-group {
+  display: flex;
+  align-items: center;
+  gap: 1.3rem;
+}
+header h1 {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin: 0;
+  text-align: center;
+  letter-spacing: 1.2px;
+}
+.menu-btn, .toggle-btn {
+  background-color: #00bcd4;
+  color: #121212;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s, color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.menu-btn:hover, .toggle-btn:hover {
+  background-color: #0097a7;
+  color: #fff;
+}
+
+/* BUILDER / RECAP */
+#parcours-builder, #recap {
+  background: #191f28;
+  color: #eee;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px #00bcd455;
+  max-width: 520px;
+  width: 97vw;
+  margin: 28px auto 20px auto;
+  padding: 30px 26px 20px 26px;
+  position: relative;
+}
+body.light #parcours-builder, body.light #recap {
+  background: #fff;
+  color: #234;
+  box-shadow: 0 4px 18px #42a5f522;
+}
+h2 {
+  margin: 0 0 22px 0;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-align: center;
+}
+label {
+  font-weight: 500;
+  margin-right: 12px;
+}
+.builder-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 17px;
+  justify-content: center;
+}
+select, input[type="number"] {
+  padding: 7px 14px;
+  border-radius: 7px;
+  border: 1px solid #00bcd4;
+  background: #232323;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+  margin-right: 6px;
+}
+select:focus, input[type="number"]:focus {
+  border-color: #42a5f5;
+}
+body.light select, body.light input[type="number"] {
+  background: #f5faff;
+  color: #234;
+  border-color: #b6cdfc;
+}
+button {
+  padding: 10px 18px;
+  font-size: 1.05rem;
+  border-radius: 8px;
+  border: none;
+  background-color: #00bcd4;
+  color: #121212;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 1px 5px #1113;
+  margin-right: 6px;
+  margin-top: 6px;
+  transition: background 0.3s;
+}
+button:disabled {
+  background: #666;
+  color: #ccc;
+  cursor: not-allowed;
+}
+button:hover:enabled {
+  background: #0097a7;
+  color: #fff;
+}
+
+/* Step list */
+#steps-list {
+  margin-top: 16px;
+  margin-bottom: 12px;
+  min-height: 28px;
+}
+.step-line {
+  background: #222c37;
+  border-radius: 7px;
+  padding: 11px 15px;
+  margin-bottom: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  box-shadow: 0 1px 4px #0ff2;
+}
+body.light .step-line {
+  background: #ecf5fc;
+}
+.step-label {
+  font-size: 1.07rem;
+  font-weight: 500;
+}
+.step-controls button {
+  font-size: 1rem;
+  padding: 4px 10px;
+  margin: 0 1px;
+  border-radius: 5px;
+}
+.step-controls button:disabled {
+  opacity: 0.6;
+}
+.empty {
+  color: #aaa;
+  padding: 18px 0 14px 0;
+  text-align: center;
+  font-size: 1.06rem;
+}
+
+/* Récap Parcours */
+#recap {
+  display: none;
+  text-align: center;
+}
+#parcoursRecapList {
+  text-align: left;
+  margin: 20px auto 26px auto;
+  max-width: 400px;
+  padding: 0 8px;
+  list-style: none;
+  counter-reset: steps;
+}
+#parcoursRecapList li {
+  margin-bottom: 8px;
+  font-size: 1.08rem;
+  position: relative;
+  padding-left: 19px;
+}
+#parcoursRecapList li:before {
+  counter-increment: steps;
+  content: counter(steps) ".";
+  position: absolute;
+  left: 0; top: 0;
+  color: #00bcd4;
+  font-weight: bold;
+}
+
+/* === Container d'iframe pour Parcours === */
+#parcours-container {
+  width: 100vw;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  opacity: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+#parcours-container.active {
+  opacity: 1;
+  display: flex;
+}
+
+/* Style de l'iframe pour qu'il prenne bien la place et reste lisible */
+#parcours-iframe {
+  width: 98vw;
+  max-width: 98vw;
+  min-width: 0;
+  margin: 0;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: #181818 !important;
+  display: block;
+  opacity: 1;
+  z-index: 2;
+  height: 90vh;
+}
+body.light #parcours-iframe {
+  background: #fafcff !important;
+}
+
+/* Score & finish recap */
+#parcours-score {
+  background: #181d25;
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 14px #00bcd422;
+  max-width: 500px;
+  margin: 18px auto 0 auto;
+  padding: 28px 30px;
+  text-align: center;
+  font-size: 1.1rem;
+  display: none;
+}
+body.light #parcours-score {
+  background: #f3f8fe;
+  color: #234;
+}
+#parcours-finish {
+  display: none;
+  text-align: center;
+  margin-top: 14px;
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+  #parcours-iframe {
+    width: 99vw;
+    max-width: 99vw;
+    min-height: 320px;
+    height: 60vh;
+    border-radius: 8px;
+  }
+}
+@media (max-width: 900px) {
+  #parcours-iframe {
+    height: 420px;
+    max-width: 99vw;
+  }
+  #parcours-score {
+    max-width: 94vw;
+    padding: 10px 4vw;
+  }
+}
+@media (max-width: 600px) {
+  #parcours-builder, #recap {
+    padding: 18px 2vw 18px 2vw;
+    max-width: 99vw;
+  }
+  .step-line {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 7px;
+  }
+  #parcours-iframe {
+    height: 260px;
+    min-width: 98vw;
+    max-width: 99vw;
+  }
+  #parcours-score {
+    padding: 13px 3vw;
+    font-size: 0.95rem;
+  }
+}
+
+/* Garde le fond noir sur tout l'écran même si body n'est pas assez haut */
+html {
+  min-height: 100vh;
+  background: #181818 !important;
+}
+
+body.parcours-fullscreen header {
+  display: none !important;
+}
+
+body.parcours-fullscreen #parcours-container {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  width: 100vw !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+}
+
+body.parcours-fullscreen #parcours-iframe {
+  width: 100vw !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: #181818 !important;
+  display: block !important;
+  height: 95vh !important; /* change 95vh par 100vh si tu veux VRAIMENT tout */
+  opacity: 1 !important;
+}
+
