@@ -51,19 +51,15 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // GESTION MODES
   if (isParcours) {
-    // Si parcours : cacher le sélecteur de mode et forcer la valeur de mode depuis l'URL
     if (modeSelectDiv) modeSelectDiv.style.display = "none";
-    // Applique la classe active au bon bouton pour la cohérence si jamais tu affiches quand même le bloc
     modeAnimeBtn.classList.toggle('active', mode === 'anime');
     modeAnimeBtn.setAttribute('aria-pressed', mode === 'anime');
     modeOpeningBtn.classList.toggle('active', mode === 'opening');
     modeOpeningBtn.setAttribute('aria-pressed', mode === 'opening');
   } else {
-    // Hors parcours : clics manuels normaux
     modeAnimeBtn.onclick = () => switchMode('anime');
     modeOpeningBtn.onclick = () => switchMode('opening');
   }
-
 
   function switchMode(newMode) {
     if (mode === newMode) return;
@@ -107,8 +103,25 @@ window.addEventListener("DOMContentLoaded", () => {
       if(!res.ok) throw new Error("Erreur chargement " + url);
       data = await res.json();
 
-      shuffle(data);
-      items = data.slice(0, TOTAL_ITEMS);
+      if (mode === "opening") {
+        let openingsList = [];
+        data.forEach(anime => {
+          if (anime.openings && Array.isArray(anime.openings)) {
+            anime.openings.forEach(opening => {
+              openingsList.push({
+                title: anime.title,
+                openingName: opening.name,
+                url: opening.url
+              });
+            });
+          }
+        });
+        shuffle(openingsList);
+        items = openingsList.slice(0, TOTAL_ITEMS);
+      } else {
+        shuffle(data);
+        items = data.slice(0, TOTAL_ITEMS);
+      }
 
       swissStats = items.map(() => ({
         wins: 0,
@@ -205,9 +218,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function showNextMatch() {
-    // Cacher le bouton suivant en dehors du classement final
     if (nextMatchBtn) nextMatchBtn.style.display = "none";
-
     if (swissMatches.length === 0 && swissRound < SWISS_ROUNDS) {
       swissRound++;
       if (swissRound < SWISS_ROUNDS) {
@@ -242,14 +253,14 @@ window.addEventListener("DOMContentLoaded", () => {
       divs[1].querySelector('img').alt = items[i2].title;
       divs[1].querySelector('h3').textContent = items[i2].title;
     } else {
-      const url1 = getYouTubeEmbedUrl(items[i1].youtubeUrls?.[0] || '') || '';
-      const url2 = getYouTubeEmbedUrl(items[i2].youtubeUrls?.[0] || '') || '';
+      const url1 = getYouTubeEmbedUrl(items[i1].url || '') || '';
+      const url2 = getYouTubeEmbedUrl(items[i2].url || '') || '';
 
       divs[0].querySelector('iframe').src = url1;
       divs[1].querySelector('iframe').src = url2;
 
-      divs[0].querySelector('h3').textContent = items[i1].title;
-      divs[1].querySelector('h3').textContent = items[i2].title;
+      divs[0].querySelector('h3').textContent = items[i1].openingName || '';
+      divs[1].querySelector('h3').textContent = items[i2].openingName || '';
     }
     currentMatch = match;
   }
@@ -364,14 +375,14 @@ window.addEventListener("DOMContentLoaded", () => {
       divs[1].querySelector('img').alt = items[i2].title;
       divs[1].querySelector('h3').textContent = items[i2].title;
     } else {
-      const url1 = getYouTubeEmbedUrl(items[i1].youtubeUrls?.[0] || '') || '';
-      const url2 = getYouTubeEmbedUrl(items[i2].youtubeUrls?.[0] || '') || '';
+      const url1 = getYouTubeEmbedUrl(items[i1].url || '') || '';
+      const url2 = getYouTubeEmbedUrl(items[i2].url || '') || '';
 
       divs[0].querySelector('iframe').src = url1;
       divs[1].querySelector('iframe').src = url2;
 
-      divs[0].querySelector('h3').textContent = items[i1].title;
-      divs[1].querySelector('h3').textContent = items[i2].title;
+      divs[0].querySelector('h3').textContent = items[i1].openingName || '';
+      divs[1].querySelector('h3').textContent = items[i2].openingName || '';
     }
     currentMatch = match;
   }
@@ -393,20 +404,18 @@ window.addEventListener("DOMContentLoaded", () => {
     if (nextMatchBtn) {
       nextMatchBtn.style.display = "block";
       if (isParcours) {
-        // Récupère la progression (optionnel selon ton URL)
         const step = parseInt(urlParams.get("step") || "1", 10);
         if (step < parcoursCount) {
           nextMatchBtn.textContent = "Suivant";
         } else {
           nextMatchBtn.textContent = "Terminer";
         }
-        // Au clic, notifie le parent frame pour le parcours
         nextMatchBtn.onclick = function() {
           parent.postMessage({
             parcoursScore: {
               label: "Anime Tournament " + (mode === "anime" ? "Anime" : "Opening"),
-              score: 0, // Mets ici ton score calculé si besoin
-              total: 0  // Mets ici ton total à atteindre si besoin
+              score: 0,
+              total: 0
             }
           }, "*");
         };
@@ -419,7 +428,6 @@ window.addEventListener("DOMContentLoaded", () => {
         };
       }
     }
-
 
     // Calcul du classement suisse avec tiebreak
     let classementSuisse = swissStats.map((s, i) => ({
@@ -501,7 +509,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const titleDiv = document.createElement('div');
     titleDiv.className = 'title';
-    titleDiv.textContent = item.title;
+
+    if (mode === "anime") {
+      titleDiv.textContent = item.title;
+    } else {
+      titleDiv.textContent = item.openingName || '';
+    }
 
     div.appendChild(rankDiv);
 
@@ -512,7 +525,7 @@ window.addEventListener("DOMContentLoaded", () => {
       div.appendChild(img);
     } else {
       const iframe = document.createElement('iframe');
-      const embedUrl = getYouTubeEmbedUrl(item.youtubeUrls?.[0] || '');
+      const embedUrl = getYouTubeEmbedUrl(item.url || '');
       if(embedUrl) {
         iframe.src = embedUrl;
         iframe.width = "100%";

@@ -19,31 +19,29 @@ const parcoursCount = parseInt(urlParams.get("count") || "1", 10);
 let parcoursIndex = 0;
 let parcoursTotalScore = 0;
 
-// === DAILY SYSTEME ===
-let isDaily = !isParcours; // force le mode classic en parcours
+// === DAILY SYSTEME (SEEDING DETERMINISTE) ===
+let isDaily = !isParcours;
 const DAILY_BANNER = document.getElementById("daily-banner");
 const DAILY_STATUS = document.getElementById("daily-status");
 const DAILY_SCORE = document.getElementById("daily-score");
 const SWITCH_MODE_BTN = document.getElementById("switch-mode-btn");
 
-function getGameSeed(gameName, year, month, day) {
-  let str = `${gameName}_${year}_${month}_${day}`;
+function simpleHash(str) {
   let hash = 5381;
   for (let i = 0; i < str.length; i++) hash = ((hash << 5) + hash) + str.charCodeAt(i);
   return Math.abs(hash) >>> 0;
 }
-function seededRandom(seed) {
-  return function() {
-    seed = (seed * 1664525 + 1013904223) % 4294967296;
-    return seed / 4294967296;
-  };
+function getDailyIndex(len) {
+  const d = new Date();
+  const dateStr = d.getFullYear() + "-" + (d.getMonth()+1).toString().padStart(2,"0") + "-" + d.getDate().toString().padStart(2,"0");
+  const hash = simpleHash(dateStr + "|" + "characterquizz");
+  return hash % len;
 }
 function todayKey() {
   const d = new Date();
   return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,"0")}-${d.getDate().toString().padStart(2,"0")}`;
 }
 const SCORE_KEY = `dailyScore_characterquizz_${todayKey()}`;
-const CHARACTER_KEY = `daily_characterquizz_id_${todayKey()}`;
 const STARTED_KEY = `dailyStarted_characterquizz_${todayKey()}`;
 
 let dailyPlayed = false;
@@ -65,8 +63,7 @@ let gameEnded = false;
 let countdown = 5;
 let countdownInterval = null;
 
-// === PARCOURS STATE ===
-let parcoursPool = []; // Liste d'animes restants (pour éviter doublons en parcours)
+let parcoursPool = [];
 
 // ---- DAILY LOGIC / MODE SWITCH ----
 if (SWITCH_MODE_BTN) {
@@ -78,7 +75,7 @@ if (SWITCH_MODE_BTN) {
 function updateSwitchModeBtn() {
   if (!SWITCH_MODE_BTN) return;
   if (isDaily) {
-    SWITCH_MODE_BTN.textContent = "Passer en mode Classic";
+    SWITCH_MODE_BTN.textContent = "Passer en mode Classique";
     SWITCH_MODE_BTN.style.backgroundColor = "#42a5f5";
   } else {
     SWITCH_MODE_BTN.textContent = "Revenir au Daily";
@@ -123,6 +120,7 @@ function startNewGame() {
   dailyPlayed = !!dailyScore;
 
   if (isDaily && allAnimes.length > 0) {
+    // Marque le daily comme commencé si pas déjà fini
     if (localStorage.getItem(STARTED_KEY) && !localStorage.getItem(SCORE_KEY)) {
       dailyPlayed = true;
       dailyScore = 0;
@@ -131,17 +129,8 @@ function startNewGame() {
       blockInputs();
       return;
     }
-
-    let animeIdx;
-    if (!localStorage.getItem(CHARACTER_KEY)) {
-      const d = new Date();
-      const seed = getGameSeed("characterquizz", d.getFullYear(), d.getMonth()+1, d.getDate());
-      const rand = seededRandom(seed)();
-      animeIdx = Math.floor(rand * allAnimes.length);
-      localStorage.setItem(CHARACTER_KEY, animeIdx);
-    } else {
-      animeIdx = parseInt(localStorage.getItem(CHARACTER_KEY));
-    }
+    // Sélection déterministe du daily (identique pour tous)
+    const animeIdx = getDailyIndex(allAnimes.length);
     currentAnime = allAnimes[animeIdx];
     localStorage.setItem(STARTED_KEY, "1");
     showDailyBanner();
@@ -164,7 +153,7 @@ function startNewGame() {
   gameEnded = false;
   restartBtn.style.display = 'none';
 
-  // Affiche tous les persos mais masqués
+  // Affiche tous les persos masqués
   currentAnime.characters.forEach((char, i) => {
     const img = document.createElement("img");
     img.src = char.image;
@@ -188,20 +177,16 @@ function startNewGame() {
   resetTimer();
 }
 
-// === MODE PARCOURS : round par round ===
+// === MODE PARCOURS ===
 function startNewParcoursRound() {
-  // Masque le header "menu" en mode parcours (optionnel)
   document.getElementById("back-to-menu").style.display = "none";
   if (DAILY_BANNER) DAILY_BANNER.style.display = "none";
-
-  // Choix sans doublon pour chaque round (prend au hasard dans le pool)
   if (parcoursPool.length === 0 || parcoursIndex >= parcoursCount) {
     showFinalRecapParcours();
     return;
   }
   currentAnime = parcoursPool.splice(Math.floor(Math.random() * parcoursPool.length), 1)[0];
 
-  // Reset
   container.innerHTML = '';
   feedback.textContent = '';
   feedback.className = "";
@@ -301,7 +286,6 @@ submitBtn.addEventListener("click", () => {
 });
 restartBtn.addEventListener("click", function() {
   if (isParcours) {
-    // En mode parcours, ce bouton sert à "Suivant" ou "Terminer"
     if (parcoursIndex < parcoursCount - 1) {
       parcoursIndex++;
       startNewParcoursRound();
@@ -495,7 +479,6 @@ function showFinalRecapParcours() {
   feedback.className = "success";
   timerDisplay.textContent = "";
   restartBtn.style.display = "none";
-  // Envoie le score final au parent
   setTimeout(() => {
     parent.postMessage({
       parcoursScore: {

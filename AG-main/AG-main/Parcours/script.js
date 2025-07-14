@@ -287,18 +287,29 @@ function showFinalRecap() {
   parcoursFinish.style.display = "block";
 
   let html = "<h2>Récapitulatif du Parcours</h2><ul>";
+  
+  // Regroupement par jeu
+  const grouped = {};
   let totalScore = 0;
-  parcoursScores.forEach((res, idx) => {
-    if (res.label && res.label.startsWith("Blind Ranking")) {
-      html += `<li>${res.label} : <b>0 / 0</b></li>`;
-    } else {
-      html += `<li>${res.label} : <b>${res.score} / ${res.total}</b></li>`;
-      totalScore += (typeof res.score === "number" ? res.score : 0);
-    }
+  let maxScore = 0;
+  parcoursScores.forEach(res => {
+    // On regroupe tout sauf les BlindRanking qui semblent être des cas à part
+    const label = (res.label && res.label.startsWith("Blind Ranking")) ? res.label : (res.label || "Autre");
+    if (!grouped[label]) grouped[label] = { score: 0, total: 0 };
+    grouped[label].score += (typeof res.score === "number" ? res.score : 0);
+    grouped[label].total += (typeof res.total === "number" ? res.total : 0);
+    totalScore += (typeof res.score === "number" ? res.score : 0);
+    maxScore += (typeof res.total === "number" ? res.total : 0);
   });
+  
+  // Affichage groupé
+  for (const label in grouped) {
+    html += `<li>${label} : <b>${grouped[label].score} / ${grouped[label].total}</b></li>`;
+  }
   html += "</ul>";
-  html += `<div style="font-size:1.3rem;margin-top:13px;"><b>Score total : ${totalScore}</b></div>`;
+  html += `<div style="font-size:1.3rem;margin-top:13px;"><b>Score total : ${totalScore} / ${maxScore} </b></div>`;
   parcoursScore.innerHTML = html;
+
   parcoursFinish.innerHTML = `<button onclick="window.location.href='../index.html'">Retour menu</button>`;
 }
 

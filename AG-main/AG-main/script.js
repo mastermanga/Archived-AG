@@ -4,20 +4,30 @@ document.getElementById("themeToggle").addEventListener("click", () => {
   const isLight = document.body.classList.contains("light");
   localStorage.setItem("theme", isLight ? "light" : "dark");
 });
-window.addEventListener("DOMContentLoaded", () => {
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "light") {
-    document.body.classList.add("light");
-  }
-  loadDailyRecap();
-});
 
 // ========== DAILY RECAP SYSTEM ==========
 
-// Helper pour obtenir la date du jour sous forme 'YYYY-MM-DD'
+// Helper pour obtenir la date du jour sous forme 'YYYY-MM-DD' (locale)
 function getTodayString() {
   const now = new Date();
-  return now.toISOString().split('T')[0];
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+// Purge toutes les clés daily qui ne sont pas du jour
+function purgeOldDailyData() {
+  const today = getTodayString();
+
+  Object.keys(localStorage).forEach(key => {
+    if (
+      (key.startsWith("dailyScore_") || key.startsWith("dailyStarted_")) &&
+      !key.endsWith("_" + today)
+    ) {
+      localStorage.removeItem(key);
+    }
+  });
 }
 
 // Charge le score daily pour un jeu donné
@@ -69,3 +79,14 @@ function loadDailyRecap() {
   const recapTotal = document.getElementById("recap-total");
   recapTotal.textContent = playedAny ? (total + " pts") : "Aucun jeu fait aujourd’hui";
 }
+
+// ========== INITIALISATION ==========
+window.addEventListener("DOMContentLoaded", () => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "light") {
+    document.body.classList.add("light");
+  }
+  purgeOldDailyData();
+  loadDailyRecap();
+});
+

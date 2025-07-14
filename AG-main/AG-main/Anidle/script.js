@@ -16,14 +16,21 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// ========= SEEDING UTILS ==========
-function getGameSeed(gameName, year, month, day) {
-  let str = `${gameName}_${year}_${month}_${day}`;
+// ========= DAILY SEEDING LOGIC (simpleHash + GAME_ID) ==========
+const GAME_ID = "anidle"; // CHANGE CE NOM si tu clones pour un autre jeu !
+function simpleHash(str) {
   let hash = 5381;
   for (let i = 0; i < str.length; i++) {
     hash = ((hash << 5) + hash) + str.charCodeAt(i);
+    hash = hash & 0xFFFFFFFF;
   }
-  return Math.abs(hash) >>> 0;
+  return Math.abs(hash);
+}
+function getDailyIndex(len) {
+  const d = new Date();
+  const dateStr = d.getFullYear() + "-" + (d.getMonth()+1).toString().padStart(2,"0") + "-" + d.getDate().toString().padStart(2,"0");
+  const hash = simpleHash(dateStr + "|" + GAME_ID);
+  return hash % len;
 }
 function seededRandom(seed) {
   return function() {
@@ -32,7 +39,7 @@ function seededRandom(seed) {
   };
 }
 
-// ========== ANIMEDLE GAME (MODE DAILY/CLASSIC) ==========
+// ========== ANIMEDLE GAME (MODE DAILY/CLASSIC/PARCOURS) ==========
 let animeData = [];
 let targetAnime = null;
 let attemptCount = 0;
@@ -48,9 +55,8 @@ const SWITCH_MODE_BTN = document.getElementById("switch-mode-btn");
 
 const today = new Date();
 const todayString = today.toISOString().split('T')[0];
-const SCORE_KEY = `dailyScore_anidle_${todayString}`;
-const ANIME_KEY = `daily_anidle_id_${todayString.replace(/-/g, '')}`;
-const STARTED_KEY = `dailyStarted_anidle_${todayString}`;
+const SCORE_KEY = `dailyScore_${GAME_ID}_${todayString}`;
+const STARTED_KEY = `dailyStarted_${GAME_ID}_${todayString}`;
 
 let dailyPlayed = false;
 let dailyScore = null;
@@ -62,6 +68,7 @@ const parcoursCount = parseInt(urlParams.get("count") || "1", 10);
 let parcoursIndex = 0;
 let parcoursTotalScore = 0;
 
+// ========== DATA LOAD ================
 fetch('../data/animes.json')
   .then(response => response.json())
   .then(data => {
@@ -71,6 +78,7 @@ fetch('../data/animes.json')
       isDaily = false;
       parcoursIndex = 0;
       parcoursTotalScore = 0;
+      if (DAILY_BANNER) DAILY_BANNER.style.display = "none";
       launchParcoursRound();
     } else {
       setupGame();
@@ -92,17 +100,7 @@ function setupGame() {
   }
 
   if (isDaily) {
-    let animeIdx;
-    let dailyId = localStorage.getItem(ANIME_KEY);
-    if (!dailyId) {
-      const d = new Date();
-      const seed = getGameSeed("anidle", d.getFullYear(), d.getMonth() + 1, d.getDate());
-      const rand = seededRandom(seed)();
-      animeIdx = Math.floor(rand * animeData.length);
-      localStorage.setItem(ANIME_KEY, animeIdx);
-    } else {
-      animeIdx = parseInt(dailyId);
-    }
+    let animeIdx = getDailyIndex(animeData.length);
     targetAnime = animeData[animeIdx];
     showDailyBanner();
     if (dailyPlayed) {
@@ -148,7 +146,7 @@ function showDailyBanner() {
 function updateSwitchModeBtn() {
   if (!SWITCH_MODE_BTN) return;
   if (isDaily) {
-    SWITCH_MODE_BTN.textContent = "Passer en mode Classic";
+    SWITCH_MODE_BTN.textContent = "Passer en mode Classique";
     SWITCH_MODE_BTN.style.backgroundColor = "#42a5f5";
   } else {
     SWITCH_MODE_BTN.textContent = "Revenir au Daily";
@@ -425,7 +423,6 @@ function launchFireworks() {
 
 // ========== Message de victoire ==========
 
-// Version native (hors Parcours)
 function showSuccessMessageClassic() {
   const container = document.getElementById("successContainer");
   container.innerHTML = `
@@ -435,7 +432,7 @@ function showSuccessMessageClassic() {
       <span style="font-size:2.3rem;">🎉</span>
     </div>
     <div style="text-align:center;">
-      <button id="nextBtn" style="font-size:1.1rem; margin: 0 auto;">${isDaily ? "Retour menu" : "Rejouer"}</button>
+      <button id="nextBtn" style="font-size:1.1rem; margin: 0 auto 1rem auto;">${isDaily ? "Retour menu" : "Rejouer"}</button>
     </div>
   `;
   container.style.display = "block";
@@ -480,7 +477,7 @@ function showSuccessMessageParcours(roundScore) {
       <span style="font-size:2.3rem;">🎉</span>
     </div>
     <div style="text-align:center;">
-      <button id="nextParcoursBtn" style="font-size:1.1rem; margin: 0 auto;">${parcoursIndex+1 < parcoursCount ? "Suivant" : "Terminer"}</button>
+      <button id="nextParcoursBtn" style="font-size:1.1rem; margin: 0 auto 1rem auto;">${parcoursIndex+1 < parcoursCount ? "Suivant" : "Terminer"}</button>
     </div>
   `;
   container.style.display = "block";

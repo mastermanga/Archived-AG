@@ -1,7 +1,7 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #181818 !important;
-  color: #f0f0f0 !important;
+  background: #181818; 
+  color: #f0f0f0; 
   margin: 0;
   min-height: 100vh;
   padding: 0;
@@ -58,7 +58,7 @@ header h1 {
   text-align: center;
   font-size: 1.2rem;
   padding: 12px 20px 10px 20px;
-  margin: 0 auto 26px auto;
+  margin: 0 auto 3rem auto;
   max-width: 460px;
   width: 95%;
   letter-spacing: 0.4px;
@@ -323,4 +323,8 @@ body.light footer {
   }
 }
 
+#successContainer button {
+  margin-top: 1.5rem;
+  margin-bottom: 1.3rem;
+}
 

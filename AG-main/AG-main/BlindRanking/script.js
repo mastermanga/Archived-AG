@@ -67,6 +67,23 @@ async function loadRankingData() {
     const response = await fetch(file);
     if (!response.ok) throw new Error('Fichier introuvable');
     animeList = await response.json();
+
+    // Si mode opening, transformer la liste d'animes en liste d'openings
+    if (rankingMode === 'opening') {
+      let openingsList = [];
+      animeList.forEach(anime => {
+        if (anime.openings && Array.isArray(anime.openings)) {
+          anime.openings.forEach(opening => {
+            openingsList.push({
+              title: anime.title, // peut servir pour tooltip
+              openingName: opening.name,
+              url: opening.url
+            });
+          });
+        }
+      });
+      animeList = openingsList;
+    }
   } catch (error) {
     alert("Erreur lors du chargement du fichier JSON : " + error.message);
     animeList = [];
@@ -108,25 +125,39 @@ function displayCurrentItem() {
     const animeImg = document.getElementById("anime-img");
     const container = document.getElementById("anime-item");
     const nextBtn = document.getElementById("next-btn");
-    // Nettoie le player central à chaque fois
     const ytDiv = document.getElementById('yt-player-1');
+    const playerZone = document.getElementById('player-zone'); // AJOUT
+
     ytDiv.innerHTML = "";
     ytDiv.style.display = "none";
     document.getElementById('player-loader').style.display = "none";
 
     if (currentIndex < selectedAnimes.length) {
       const item = selectedAnimes[currentIndex];
-      document.getElementById("anime-name").textContent = item.title;
       if (rankingMode === "anime") {
+        document.getElementById("anime-name").textContent = item.title;
         animeImg.src = item.image;
         animeImg.style.display = "block";
+        if (playerZone) {
+          playerZone.style.height = "0";
+          playerZone.style.minHeight = "0";
+          playerZone.style.padding = "0";
+          playerZone.style.overflow = "hidden";
+        }
       } else {
+        // NOM de l’opening UNIQUEMENT (pas de doublon titre)
+        document.getElementById("anime-name").textContent = item.openingName || "";
         animeImg.style.display = "none";
-        // Affiche le player <iframe> pour que l'utilisateur clique sur "Play"
+        if (playerZone) {
+          playerZone.style.height = "225px";
+          playerZone.style.minHeight = "225px";
+          playerZone.style.padding = "";
+          playerZone.style.overflow = "";
+        }
         ytDiv.innerHTML = "";
         ytDiv.style.display = "block";
-        if (item.youtubeUrls?.[0]) {
-          const embedUrl = getYouTubeEmbedUrl(item.youtubeUrls[0]);
+        if (item.url) {
+          const embedUrl = getYouTubeEmbedUrl(item.url);
           ytDiv.innerHTML = `<iframe src="${embedUrl}" width="100%" height="225" frameborder="0" allowfullscreen style="border-radius:10px;background:#222;box-shadow:0 2px 12px #1114;"></iframe>`;
         }
       }
@@ -138,7 +169,7 @@ function displayCurrentItem() {
       container.style.display = "none";
       nextBtn.style.display = "block";
       document.getElementById('player-loader').style.display = "none";
-      finishGame(); // On gère le bouton ici (parcours/rejouer)
+      finishGame();
     }
   }, 120);
 }
@@ -149,7 +180,12 @@ function assignRank(rank) {
     alert("Ce rang a déjà été attribué !");
     return;
   }
-  rankings[rank - 1] = selectedAnimes[currentIndex].title;
+  // Stocke différemment selon le mode
+  if (rankingMode === "anime") {
+    rankings[rank - 1] = selectedAnimes[currentIndex].title;
+  } else {
+    rankings[rank - 1] = selectedAnimes[currentIndex].openingName;
+  }
   document.getElementById(`rank-${rank}`).disabled = true;
   updateRankingList();
   currentIndex++;
@@ -163,7 +199,12 @@ function updateRankingList() {
   for (let i = 0; i < 10; i++) {
     let html = "";
     if (rankings[i]) {
-      const item = selectedAnimes.find(a => a.title === rankings[i]);
+      let item;
+      if (rankingMode === "anime") {
+        item = selectedAnimes.find(a => a.title === rankings[i]);
+      } else {
+        item = selectedAnimes.find(a => a.openingName === rankings[i]);
+      }
       if (item) {
         if (rankingMode === 'anime') {
           html = `
@@ -175,8 +216,8 @@ function updateRankingList() {
         } else {
           html = `
             <li>
-              <iframe src="${getYouTubeEmbedUrl(item.youtubeUrls?.[0] || "")}" frameborder="0" allowfullscreen style="border-radius:10px;width:100%;height:210px;background:#222;box-shadow:0 2px 12px #1114;"></iframe>
-              <span>Rang ${i + 1}: ${item.title}</span>
+              <iframe src="${getYouTubeEmbedUrl(item.url || "")}" frameborder="0" allowfullscreen style="border-radius:10px;width:100%;height:210px;background:#222;box-shadow:0 2px 12px #1114;"></iframe>
+              <span>Rang ${i + 1}: ${item.openingName}</span>
             </li>
           `;
         }
@@ -221,14 +262,18 @@ async function startNewRanking() {
 }
 
 // ==== FIN DE PARTIE ET ENCHAÎNEMENT PARCOURS ====
-// appelé automatiquement à la fin d'une partie
 function finishGame() {
   const nextBtn = document.getElementById("next-btn");
   // Score simple = nb de rangs exacts trouvés
   let score = 0;
   for (let i = 0; i < 10; i++) {
-    const trueTitle = selectedAnimes[i]?.title;
-    if (rankings[i] === trueTitle) score++;
+    let trueValue;
+    if (rankingMode === "anime") {
+      trueValue = selectedAnimes[i]?.title;
+    } else {
+      trueValue = selectedAnimes[i]?.openingName;
+    }
+    if (rankings[i] === trueValue) score++;
   }
   // Mode parcours
   if (isParcours) {
