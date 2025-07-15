@@ -65,6 +65,44 @@ let countdownInterval = null;
 
 let parcoursPool = [];
 
+// --- NOUVELLE LOGIQUE DE GROUPES & RANDOM ---
+function splitCharacters(characters) {
+  const N = characters.length;
+  // Cas particulier : moins de 6 persos, retourner des groupes "vides" ou d'1
+  if (N < 6) {
+    let groups = [];
+    for (let i = 0; i < 6; i++) {
+      if (i < N) groups.push([characters[i]]);
+      else groups.push([]);
+    }
+    return groups;
+  }
+  const baseSize = Math.floor(N / 6);
+  const surplus = N % 6;
+  let groupSizes = Array(6).fill(baseSize);
+  // Les plus populaires (fin du tableau) prennent le surplus
+  for (let i = 0; i < surplus; i++) {
+    groupSizes[5 - i] += 1;
+  }
+  let groups = [];
+  let start = 0;
+  for (let i = 0; i < 6; i++) {
+    groups.push(characters.slice(start, start + groupSizes[i]));
+    start += groupSizes[i];
+  }
+  return groups;
+}
+function pickRandomPerGroup(characters) {
+  // Prend 1 random par groupe parmi 6 groupes
+  const groups = splitCharacters(characters);
+  // Retourne que les persos sélectionnés (par groupe), ignore les groupes vides
+  return groups.map(group => {
+    if (group.length === 0) return null;
+    if (group.length === 1) return group[0];
+    return group[Math.floor(Math.random() * group.length)];
+  }).filter(Boolean);
+}
+
 // ---- DAILY LOGIC / MODE SWITCH ----
 if (SWITCH_MODE_BTN) {
   SWITCH_MODE_BTN.onclick = () => {
@@ -145,6 +183,9 @@ function startNewGame() {
     unlockClassicInputs();
   }
 
+  // --- NOUVELLE SÉLECTION DE PERSOS À AFFICHER ---
+  let selectedCharacters = pickRandomPerGroup(currentAnime.characters);
+
   // Reset de tout
   container.innerHTML = '';
   feedback.textContent = '';
@@ -154,7 +195,7 @@ function startNewGame() {
   restartBtn.style.display = 'none';
 
   // Affiche tous les persos masqués
-  currentAnime.characters.forEach((char, i) => {
+  selectedCharacters.forEach((char, i) => {
     const img = document.createElement("img");
     img.src = char.image;
     img.alt = char.name;
@@ -163,6 +204,9 @@ function startNewGame() {
     img.style.display = "none";
     container.appendChild(img);
   });
+
+  // On garde la liste sélectionnée dans currentAnime.visibleCharacters pour revealNextCharacter
+  currentAnime.visibleCharacters = selectedCharacters;
 
   revealNextCharacter();
 
@@ -187,6 +231,9 @@ function startNewParcoursRound() {
   }
   currentAnime = parcoursPool.splice(Math.floor(Math.random() * parcoursPool.length), 1)[0];
 
+  // --- NOUVELLE SÉLECTION DE PERSOS À AFFICHER ---
+  let selectedCharacters = pickRandomPerGroup(currentAnime.characters);
+
   container.innerHTML = '';
   feedback.textContent = '';
   feedback.className = "";
@@ -194,7 +241,7 @@ function startNewParcoursRound() {
   gameEnded = false;
   restartBtn.style.display = 'none';
 
-  currentAnime.characters.forEach((char, i) => {
+  selectedCharacters.forEach((char, i) => {
     const img = document.createElement("img");
     img.src = char.image;
     img.alt = char.name;
@@ -203,6 +250,8 @@ function startNewParcoursRound() {
     img.style.display = "none";
     container.appendChild(img);
   });
+
+  currentAnime.visibleCharacters = selectedCharacters;
 
   revealNextCharacter();
 
@@ -301,7 +350,8 @@ restartBtn.addEventListener("click", function() {
 
 // --- REVEAL UN PERSO ---
 function revealNextCharacter() {
-  if (revealedCount < currentAnime.characters.length) {
+  // On s'appuie désormais sur la liste visibleCharacters (sélectionnée et randomisée par groupe)
+  if (revealedCount < (currentAnime.visibleCharacters ? currentAnime.visibleCharacters.length : 0)) {
     const img = document.getElementById("char-" + revealedCount);
     if (img) img.style.display = "block";
     revealedCount++;
@@ -319,7 +369,7 @@ function resetTimer() {
     if (countdown <= 0) {
       clearInterval(countdownInterval);
       if (!gameEnded) {
-        if (revealedCount === currentAnime.characters.length) {
+        if (revealedCount === (currentAnime.visibleCharacters ? currentAnime.visibleCharacters.length : 0)) {
           if (isParcours) {
             showFeedbackParcours(false);
           } else if (isDaily && !dailyPlayed) {
@@ -361,7 +411,7 @@ function checkGuess() {
     feedback.textContent = `🎉 Bonne réponse ! C'était bien "${currentAnime.title}"`;
     feedback.className = "success";
     clearInterval(countdownInterval);
-    for (let i = revealedCount; i < currentAnime.characters.length; i++) {
+    for (let i = revealedCount; i < (currentAnime.visibleCharacters ? currentAnime.visibleCharacters.length : 0); i++) {
       document.getElementById("char-" + i).style.display = "block";
     }
     if (isDaily && !dailyPlayed) {
@@ -379,7 +429,7 @@ function checkGuess() {
   } else {
     feedback.textContent = "❌ Mauvaise réponse.";
     feedback.className = "error";
-    if (revealedCount < currentAnime.characters.length) {
+    if (revealedCount < (currentAnime.visibleCharacters ? currentAnime.visibleCharacters.length : 0)) {
       clearInterval(countdownInterval);
       revealNextCharacter();
     } else {
@@ -416,7 +466,7 @@ function checkGuessParcours() {
   } else {
     feedback.textContent = "❌ Mauvaise réponse.";
     feedback.className = "error";
-    if (revealedCount < currentAnime.characters.length) {
+    if (revealedCount < (currentAnime.visibleCharacters ? currentAnime.visibleCharacters.length : 0)) {
       clearInterval(countdownInterval);
       revealNextCharacter();
     } else {
@@ -432,7 +482,7 @@ function checkGuessParcours() {
 // --- FIN ROUND PARCOURS ---
 function showFeedbackParcours(isWin) {
   clearInterval(countdownInterval);
-  for (let i = revealedCount; i < currentAnime.characters.length; i++) {
+  for (let i = revealedCount; i < (currentAnime.visibleCharacters ? currentAnime.visibleCharacters.length : 0); i++) {
     document.getElementById("char-" + i).style.display = "block";
   }
   let roundScore = 0;

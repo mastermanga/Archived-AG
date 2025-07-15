@@ -47,6 +47,56 @@ header h1 {
   color: white;
 }
 
+/* ========== NOUVEAU : Boutons d'indices ========== */
+.indice-btn {
+  background: #1565c0;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 0.65rem 1.3rem;
+  margin: 0;
+  box-shadow: 0 1px 4px #1115;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
+  opacity: 0.85;
+}
+.indice-btn:hover:not(:disabled) {
+  background: #42a5f5;
+  color: #fff;
+  opacity: 1;
+}
+.indice-btn:disabled {
+  background: #a5a5a5;
+  color: #ddd;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+.indice-btn.used {
+  background: #bbb !important;
+  color: #666 !important;
+  opacity: 0.5 !important;
+  cursor: default !important;
+}
+
+body.light .indice-btn {
+  background: #1976d2;
+  color: #fff;
+}
+body.light .indice-btn:hover:not(:disabled) {
+  background: #42a5f5;
+  color: #fff;
+}
+
+#indices-bar {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 /* ========== DAILY BANNER ========== */
 #daily-banner {
   display: none;
@@ -113,7 +163,6 @@ body.light .toggle-btn:hover {
 
 /* Container central */
 #container {
-  /* Style habituel */
   margin: 0 auto;
   margin-bottom: 1.5rem;
   max-width: 1150px;
@@ -216,54 +265,7 @@ body.light input[type="text"] {
   pointer-events: none; z-index: 1000;
 }
 
-#indicesContainer {
-  margin: 22px auto;
-  max-width: 600px;
-  text-align: left;
-  background: #222;
-  padding: 15px 22px 12px 22px;
-  border-radius: 10px;
-  border: 1px solid #444;
-}
-body.light #indicesContainer {
-  background: #f4f8fa;
-  border: 1px solid #bbb;
-  color: #222;
-}
-#indicesContainer img {
-  border-radius: 6px;
-  margin-top: 5px;
-}
-
-button,
-#nextBtn {
-  margin-top: 13px;
-  padding: 12px 19px;
-  font-size: 1.05rem;
-  border-radius: 7px;
-  border: none;
-  cursor: pointer;
-  background-color: #00bcd4;
-  color: #121212;
-  font-weight: bold;
-  transition: background 0.2s;
-  box-shadow: 0 1px 5px #1113;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-button:hover,
-#nextBtn:hover {
-  background-color: #0097a7;
-  color: white;
-}
-body.light button, body.light #nextBtn {
-  background-color: #1565c0;
-  color: white;
-}
-body.light button:hover, body.light #nextBtn:hover {
-  background-color: #0d47a1;
-}
+/* Ancien indicesContainer supprimé ! */
 
 /* Sidebar suggestions */
 #aideContainer {
@@ -327,4 +329,3 @@ body.light footer {
   margin-top: 1.5rem;
   margin-bottom: 1.3rem;
 }
-
